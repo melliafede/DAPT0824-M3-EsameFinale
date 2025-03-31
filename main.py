@@ -57,7 +57,7 @@ print("\nRapporto percentuale tra il risultato ottenuto considerando total_cases
 percentage_diff = round(continents_totals / continents_totals_new_cases * 100,2)
 print(percentage_diff)
 
-# c'è una leggera differenza tra il calcolo effettuato utilizzando i nuovi casi
+# c'è una leggera differenza, pressocché trascurabile, tra il calcolo effettuato utilizzando i nuovi casi
 # rispetto al calcolo effettuato considerando i casi totali, probabilmente dovuto alla presenza di alcuni
 # valori nulli all'interno della colonna new_cases dovuti ad errori di registrazione dei dati,
 # come riportato sul repository del documento
