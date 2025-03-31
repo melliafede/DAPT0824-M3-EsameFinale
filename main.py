@@ -35,14 +35,27 @@ print(df.loc[filter_asia & filter_dates, ["date", "new_cases", "total_cases"]].h
 # lista dei continenti
 continents_list = np.sort(df.dropna(subset="continent")["continent"].unique())
 
-tot_cases_per_agg_location = df[df["continent"].isna()].groupby("location")["total_cases"].last()
+# ciclo utilizzato per verifica dei valori di total_cases per le location aggregate
+# for continent in continents_list:
+#     continent_nations = df.loc[df["continent"] == continent, "location"].unique()
+#     tot_continent_nations = df[df["location"].isin(continent_nations)].groupby("location")["total_cases"].last()
+#     tot_continent = tot_continent_nations.sum()
+#     print(f"{continent}: {tot_continent}")
 
-continents_totals = tot_cases_per_agg_location[tot_cases_per_agg_location.index.isin(continents_list)]
+
+tot_cases_per_location = df.groupby("location")["total_cases"].last()
+
+continents_totals = tot_cases_per_location[tot_cases_per_location.index.isin(continents_list)]
 print("\nTotale casi per ogni continente:")
 print(continents_totals)
 
 print("\nTotale casi per ogni continente (calcolo su new_cases)")
+continents_totals_new_cases = df.groupby("continent")["new_cases"].sum()
 print(f"{df.groupby("continent")["new_cases"].sum()}")
+
+print("\nRapporto percentuale tra il risultato ottenuto considerando total_cases e new_cases")
+percentage_diff = round(continents_totals / continents_totals_new_cases * 100,2)
+print(percentage_diff)
 
 # c'è una leggera differenza tra il calcolo effettuato utilizzando i nuovi casi
 # rispetto al calcolo effettuato considerando i casi totali, probabilmente dovuto alla presenza di alcuni
@@ -51,7 +64,7 @@ print(f"{df.groupby("continent")["new_cases"].sum()}")
 # In rare cases where our source reports a negative daily change due to a data correction, we set this metric to NA.
 
 
-world_total = tot_cases_per_agg_location["World"]
+world_total = tot_cases_per_location["World"]
 print(f"\nTotale casi mondiale: {world_total}")
 
 print("\nPercentuale casi rispetto al totale mondiale per ogni continente:")
@@ -143,7 +156,7 @@ filtro_nulli = df["hosp_patients"].isna()
 num_val_nulli = df["hosp_patients"].isna().sum()
 num_val_tot = df.shape[0]
 print(f"\nNumero valori nulli: {num_val_nulli}, {round(num_val_nulli / num_val_tot * 100, 2)}% del totale")
-print(f"\n{df.loc[filtro_nulli,["iso_code", "date", "hosp_patients"] ]}")
+print(f"\n{df.loc[filtro_nulli, ["iso_code", "date", "hosp_patients"]]}")
 
 # Risulta molto difficile sostituire i valori nulli, considerato che sono relativi a tutto il 2021 per la nazione
 # Germania, siccome è inverosimile che un intera nazione non abbia avuto alcun paziente ospedalizzato per l'intero
@@ -160,4 +173,3 @@ plt.xlabel("Nazioni")
 plt.ylabel("Totale pazienti ospedalizzati")
 
 plt.show()
-
